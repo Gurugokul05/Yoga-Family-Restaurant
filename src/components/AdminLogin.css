@@ -1,0 +1,100 @@
+#AdminContainer{
+    display: flex;
+    justify-content: center;  
+    align-items: center;  
+    height: 100vh; 
+    width: 100vw;
+    background-image: url('/src/assets/PcLogin.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100%;
+}
+#AdminContainer2{
+    border: 1px solid rgb(0, 0, 0);
+    padding: 40px;
+    text-align: center;
+    border-radius: 20px;
+     box-shadow: 0 0 60px rgb(0, 0, 0); 
+    background: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(10px);          
+  -webkit-backdrop-filter: blur(10px);  
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+#AdminContainer2 h1{
+    text-align: left;
+    margin: 0;
+    margin-bottom: 40px;
+}
+#AdminContainer2 input {
+    padding: 10px;
+    padding-left: 15px;
+    outline: none;
+    border: 1px rgb(83, 81, 81) solid;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+#AdminContainer2 input:hover{
+    box-shadow: 0 0 20px rgb(65,65,65);
+}
+#AdminContainer2 button{
+    margin-top: 20px;
+    width: 190px;  
+    max-width: 90%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+#AdminContainer2 button:hover{
+    background-color: #3128af; 
+    color: black;
+    box-shadow: 0 0 10px #3128af, 0 0 10px #3128af;
+}
+#AdminContainer2 link{
+    color: blue;
+}
+#AdminContainer2 a{
+  cursor: pointer;
+}
+
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #3128af;
+}
+
+
+
+@media (max-width: 480px) {
+  #AdminContainer{
+    background-image: url('/src/assets/MobileLogin.jpeg');
+  }
+}
