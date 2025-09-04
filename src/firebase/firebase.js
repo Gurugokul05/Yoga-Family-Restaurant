@@ -4,12 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA8z0towB5vmUMhQrNWH1g5sJ9xNUAgyKo",
-  authDomain: "yoga-restaurant-4a2a5.firebaseapp.com",
-  projectId: "yoga-restaurant-4a2a5",
-  storageBucket: "yoga-restaurant-4a2a5.firebasestorage.app",
-  messagingSenderId: "668903684943",
-  appId: "1:668903684943:web:3daca149365ab0e9ea233a"
+  //firebase api here
 };
 
 const app = initializeApp(firebaseConfig);
