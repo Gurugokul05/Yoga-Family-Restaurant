@@ -35,4 +35,4 @@ Yoga Family Restaurant allows users to browse and order food online. Admins can 
 
 1. Clone the repository:  
 ```bash
-git clone https://github.com/your-username/Yoga-Family-Restaurant.git
+git clone https://github.com/Gurugokul05/Yoga-Family-Restaurant.git
