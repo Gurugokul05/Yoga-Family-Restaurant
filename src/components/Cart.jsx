@@ -1,32 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
+import {collection,getDocs} from "firebase/firestore";
+import {db} from "../firebase/firebase.js"
 import "./Cart.css";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [price,setPrice] = useState([]);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
-    try {
-      const gettingItems = localStorage.getItem("cart");
-      const cart =  gettingItems ? JSON.parse(gettingItems) : [];
-      setCartItems(cart)
-    } catch (error) {
-      console.error("Error Occure")
-      setCartItems([]);
-    }
-  }, []);
+
+  //getting the price of the food from db
+  // useEffect(() => {
+  //   try {
+  //     const gettingItems = localStorage.getItem("cart");
+  //      const cart =  gettingItems ? JSON.parse(gettingItems) : [];
+  //      console.log(cart);
+       
+  //      setCartItems(cart);
+  //   } catch (error) {
+      
+  //   }
+  // }
+  //   )
+  
+
+
+  
 
   useEffect(() => {
-    const newTotal = cartItems.reduce(
+    const newTotal = price.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
     setTotal(newTotal);
-    localStorage.setItem("cart", JSON.stringify(cartItems));
+    localStorage.setItem("cart", JSON.stringify(price));
     
-  }, [cartItems]);
+  }, [price]);
 
   const removeItem = (id) => {
     setCartItems(cartItems.filter((item) => item.id !== id));

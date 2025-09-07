@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { auth, db} from "./../firebase/firebase";
@@ -9,27 +9,18 @@ import { FaShoppingCart } from "react-icons/fa";
 
 
 
-
+export const priceOfTheFood = createContext(null)
 
 const MenuCategory = () => {
   
   const [foodItems, setFoodItems] = useState([]);
   const [cartItems, setCartItems] = useState(
-  JSON.parse(localStorage.getItem("cart")) || []
-  // ()=>{
-  //   try {
-  //     const gettingItems = localStorage.getItem("cart");
-  //     return gettingItems ? JSON.parse(gettingItems) : [];
-  //   } catch (error) {
-  //     console.error("Error Occure")
-  //     return [];
-  //   }
-  // }
+  
 );
 
 
   const {category} = useParams();
-  
+  // console.log(category)
   useEffect(() => {
     
     const fetchData = async () => {
@@ -47,23 +38,7 @@ const MenuCategory = () => {
 
   const [status, setStatus] = useState("Available");
   const handleCart = (item) => {
-  const uniqueId = `${item.id}-${item.name}`;
-  const existingIndex = cartItems.findIndex(c => c.id === uniqueId);
-
-  let newCart;
-  if (existingIndex !== -1) {
-    newCart = [...cartItems];
-    newCart[existingIndex].quantity += 1;
-  } else {
-    newCart = [
-      ...cartItems,
-      { id: uniqueId, name: item.name, price: item.price, img: item.img || "", quantity: 1 }
-    ];
-    alert(`${item.name} added to cart!`);
-  }
-
-  setCartItems(newCart); // update state
-  localStorage.setItem("cart", JSON.stringify(newCart));
+  
 };
 
 
