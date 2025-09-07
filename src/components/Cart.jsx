@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import {collection,getDocs} from "firebase/firestore";
-import {db} from "../firebase/firebase.js"
+import {collection,getDocs,deleteDoc,doc} from "firebase/firestore";
+import {auth, db} from "../firebase/firebase.js"
 import "./Cart.css";
 
 const Cart = () => {
@@ -25,7 +25,22 @@ const Cart = () => {
   // }
   //   )
   
+useEffect(() => {
+    
+    const fetchData = async () => {
+      const user = auth.currentUser;
+      const email = user.email;
+      const itemref = collection(db, "users",email,"cart");
+      const snapshot = await getDocs(itemref);
+      const items = snapshot.docs.map((doc) => ({
+  id: `${doc.id}`,
+  ...doc.data(),
+}));
 
+      setCartItems(items);
+    };
+    fetchData();
+  }, []);
 
   
 
@@ -40,7 +55,11 @@ const Cart = () => {
   }, [price]);
 
   const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+    setCartItems(cartItems.filter((item) => {
+      if(item.id === id){
+deleteDoc(doc(db,"user car data",id));
+      }
+    }));
   };
 
   const updateQuantity = (id, quantity) => {

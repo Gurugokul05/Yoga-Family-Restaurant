@@ -1,35 +1,27 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Helmet } from "react-helmet";
-import { auth, db} from "./../firebase/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { auth, db } from "./../firebase/firebase";
+import { collection, getDocs, addDoc, setDoc, doc, updateDoc, increment, getDoc } from "firebase/firestore";
 import { Link, useParams } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 
 
 
-
-export const priceOfTheFood = createContext(null)
-
 const MenuCategory = () => {
-  
   const [foodItems, setFoodItems] = useState([]);
-  const [cartItems, setCartItems] = useState(
-  
-);
+  const [cartItems, setCartItems] = useState([]);
 
-
-  const {category} = useParams();
+  const { category } = useParams();
   // console.log(category)
   useEffect(() => {
-    
     const fetchData = async () => {
       const itemref = collection(db, category);
       const snapshot = await getDocs(itemref);
       const items = snapshot.docs.map((doc) => ({
-  id: `${category}-${doc.id}`,
-  ...doc.data(),
-}));
+        id: `${doc.id}`,
+        ...doc.data(),
+      }));
 
       setFoodItems(items);
     };
@@ -37,11 +29,45 @@ const MenuCategory = () => {
   }, [category]);
 
   const [status, setStatus] = useState("Available");
-  const handleCart = (item) => {
-  
-};
+  const handleCart = async (item) => {
+    //prevent duplication logic here
+    setCartItems((previousCartItems) => [...previousCartItems, item]);
+    const user = auth.currentUser;
+    const email = user.email;
+    const foodId = item.id;
+    const existingItemRef = doc(db,"users",email,"cart",foodId)
+    const pathChecker = await getDoc(doc(db,"users",email,"cart",foodId))
+    // console.log(pathChecker.id);
+    
+    // console.log("Existinng one",existingItemRef.id);
+    try {
+      //get the user email and store it in users->email-id->cart->food-items
+      //getting the current user details and getting the email
+      //.exists() return true if already exists and return false if not.
+      console.log(foodId);
+      if(!pathChecker.exists()){
+        const addCart = await setDoc(doc(db, "users", email, "cart", foodId), {
+          ...item,
+          quantity: 1,
+        });
 
+      }
 
+      //logic to update the quantity by one by using updateDoc , 
+      //increment increase the quantity value by 1
+      if(pathChecker.exists()){
+        await updateDoc(existingItemRef,{
+          quantity:increment(1)
+        }
+        )
+      }
+      // console.log("Added to cart Succesfully");
+    } catch (error) {
+      console.error(error);
+    }
+    
+    
+  };
 
   return (
     <div>
@@ -56,7 +82,6 @@ const MenuCategory = () => {
         </div>
       </header>
       <div>
-        
         <div>
           <div id="food-list">
             {foodItems.map((item) => (
@@ -76,8 +101,11 @@ const MenuCategory = () => {
             ))}
           </div>
         </div>
-        <button id="cart-sticky-button"><Link to="/cart"><FaShoppingCart size={40} /></Link></button>
-
+        <button id="cart-sticky-button">
+          <Link to="/cart">
+            <FaShoppingCart size={40} />
+          </Link>
+        </button>
       </div>
       <div id="footer">
         <footer>
