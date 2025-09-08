@@ -1,106 +1,138 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import {collection,getDocs,deleteDoc,doc} from "firebase/firestore";
-import {auth, db} from "../firebase/firebase.js"
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  increment,
+  getDoc
+  
+} from "firebase/firestore";
+import { auth, db } from "../firebase/firebase.js";
 import "./Cart.css";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [price,setPrice] = useState([]);
+  const [price, setPrice] = useState([]);
   const [total, setTotal] = useState(0);
 
-
   //getting the price of the food from db
-  // useEffect(() => {
-  //   try {
-  //     const gettingItems = localStorage.getItem("cart");
-  //      const cart =  gettingItems ? JSON.parse(gettingItems) : [];
-  //      console.log(cart);
-       
-  //      setCartItems(cart);
-  //   } catch (error) {
-      
-  //   }
-  // }
-  //   )
-  
-useEffect(() => {
-    
+
+  useEffect(() => {
+    // fetch the cart data from db
     const fetchData = async () => {
       const user = auth.currentUser;
       const email = user.email;
-      const itemref = collection(db, "users",email,"cart");
+      const itemref = collection(db, "users", email, "cart");
       const snapshot = await getDocs(itemref);
       const items = snapshot.docs.map((doc) => ({
-  id: `${doc.id}`,
-  ...doc.data(),
-}));
+        id: `${doc.id}`,
+        ...doc.data(),
+      }));
 
       setCartItems(items);
+
+      // setQuantityofFood(items.id)
     };
     fetchData();
-  }, []);
+  }, [cartItems]);
 
-  
 
-  useEffect(() => {
-    const newTotal = price.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-    setTotal(newTotal);
-    localStorage.setItem("cart", JSON.stringify(price));
+  //total changes here
+  // useEffect(async() => {
+  //   const getFoodItem =await collection(db, "users", email, "cart");
+  //   const getquantity = await getDoc(collection(db, "users", email, "cart"));
+  //   const quantityOfFood = getquantity.data();
+  //   console.log(quantityOfFood);
     
-  }, [price]);
+  //   const newTotal = price.reduce(
+      
+  //     (sum, item) => sum + item.price * item.quantity,
+  //     0
+  //   );
+  //   setTotal(newTotal);
+    
+  // }, [cartItems]);
 
   const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => {
-      if(item.id === id){
-deleteDoc(doc(db,"user car data",id));
-      }
-    }));
-  };
-
-  const updateQuantity = (id, quantity) => {
-    if (quantity < 1) return;
+    //get the id and delete that from db
     setCartItems(
-      cartItems.map((item) => (item.id === id ? { ...item, quantity } : item))
+      cartItems.filter((item) => {
+        if (item.id === id) {
+          deleteDoc(doc(db, "users", email, "cart", id));
+        }
+      })
     );
+  };
+  //update the quantity of food from db and also changing the db quantity
+  //get the current user email through auth.currentUser and get the email so that we can get into the desired db
+  const user = auth.currentUser;
+  const email = user.email;
+  //quantity decrease logic
+  const updateQuantityDecrease = async (id) => {
+    const getFoodItem = doc(db, "users", email, "cart", id);
+    const getquantity = await getDoc(doc(db, "users", email, "cart", id));
+    const quantityOfFood = getquantity.data().quantity;
+    if (quantityOfFood === 1) {
+      alert("Minimum amount of quantity reached");
+    } else {
+      await updateDoc(getFoodItem, {
+        quantity: increment(-1),
+      });
+    }
+  };
+  //quantity update logic
+  const updateQuantityAdd = async (id) => {
+    const getFoodItem = doc(db, "users", email, "cart", id);
+    const getquantity = await getDoc(doc(db, "users", email, "cart", id));
+    const quantityOfFood = getquantity.data().quantity;
+
+    if (quantityOfFood >= 10) {
+      alert("Maximum amount of quantity reached");
+    } else {
+      await updateDoc(getFoodItem, {
+        //updating the quantity
+        quantity: increment(1),
+      });
+    }
   };
 
   if (cartItems.length === 0) {
     return (
       <div>
-        
-        <div >
-      <Helmet>
-        <title>Yoga Family Restaurant | Cart</title>
-      </Helmet>
+        <div>
+          <Helmet>
+            <title>Yoga Family Restaurant | Cart</title>
+          </Helmet>
 
-      <header>
-        <h1>Yoga Family Restaurant</h1>
-      </header>
+          <header>
+            <h1>Yoga Family Restaurant</h1>
+          </header>
 
-      <div id="cart-main" style={{ 
-  display: "flex", 
-  flexDirection: "column", 
-  justifyContent: "center", 
-  alignItems: "center", 
-  minHeight: "80vh",   // full height so content is centered vertically
-  textAlign: "center",
-  padding: "20px"
-}}>
-        <h1 style={{textAlign:"center"}}>Cart is Empty</h1>
-        
+          <div
+            id="cart-main"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "80vh", // full height so content is centered vertically
+              textAlign: "center",
+              padding: "20px",
+            }}
+          >
+            <h1 style={{ textAlign: "center" }}>Cart is Empty</h1>
 
-        <div style={{marginTop:"10px"}}>
-          
-          <button><Link to="/home">Go back to menu</Link></button>
+            <div style={{ marginTop: "10px" }}>
+              <button>
+                <Link to="/home">Go back to menu</Link>
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-        
       </div>
     );
   }
@@ -120,30 +152,29 @@ deleteDoc(doc(db,"user car data",id));
         <div id="cart">
           {cartItems.map((item) => (
             <div key={`${item.id}-${item.name}`} className="cart-items">
-
               <img src={item.img} alt={item.name} />
               <p>{item.name}</p>
               <p>₹{item.price}</p>
               <div id="cart-buttons">
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                  disabled={item.quantity <= 1}
+                  onClick={() => updateQuantityDecrease(item.id)}
+                  // disabled={item.quantity <= 1}
                 >
                   -
                 </button>
                 <span style={{ padding: "5px 10px" }}>{item.quantity}</span>
-                <button style={{ marginRight:"5px" }}
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                <button
+                  style={{ marginRight: "5px" }}
+                  onClick={() => updateQuantityAdd(item.id)}
+                  // disabled={item.quantity >= 10}
                 >
                   +
                 </button>
-                <button onClick={() => removeItem(item.id)} id="remove"  >
+                <button onClick={() => removeItem(item.id)} id="remove">
                   Remove
                 </button>
               </div>
-              
             </div>
-            
           ))}
         </div>
 

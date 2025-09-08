@@ -44,7 +44,7 @@ const MenuCategory = () => {
       //get the user email and store it in users->email-id->cart->food-items
       //getting the current user details and getting the email
       //.exists() return true if already exists and return false if not.
-      console.log(foodId);
+      
       if(!pathChecker.exists()){
         const addCart = await setDoc(doc(db, "users", email, "cart", foodId), {
           ...item,
