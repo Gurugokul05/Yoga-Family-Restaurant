@@ -12,7 +12,7 @@ const UserRoute = () => {
         setLoading(false);
       });
       return ()=> logOut();
-    })
+    },[])
     if (loading) {
         return (
           <div

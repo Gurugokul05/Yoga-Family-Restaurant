@@ -1,18 +1,28 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 
 import "./Home.css";
 const Home = () => {
+  
+  const [allow, setAllow] = useState(false);
   const navigate = useNavigate();
   const handleView = (category) => {
     // <Link to={`/home/${category.toLowerCase()}`}></Link>
     navigate(`/home/${category.toLowerCase()}`);
   };
+  
+  useEffect(() => {
+    const logOut = onAuthStateChanged(auth, (user) => {
+      setAllow(user);
+      
+    });
+    return () => logOut();
+  }, []);
   const handleLogOut = () => {
     signOut(auth)
       .then(() => {
@@ -34,7 +44,11 @@ const Home = () => {
             <h1>Yoga Family Restaurant</h1>
           </div>
         </div>
-        <button onClick={() => handleLogOut()}>LogOut</button>
+        {allow ? (
+  <button onClick={()=> handleLogOut()}>Logout</button>
+) : (
+  <button onClick={() => navigate("/login")}>Login</button>
+)}
       </header>
       <div>
         <div id="mainintro">

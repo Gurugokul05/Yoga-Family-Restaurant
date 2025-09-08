@@ -44,23 +44,32 @@ const MenuCategory = () => {
       //get the user email and store it in users->email-id->cart->food-items
       //getting the current user details and getting the email
       //.exists() return true if already exists and return false if not.
+      const maxQuantity = 10;
       
-      if(!pathChecker.exists()){
+      if(!pathChecker.exists() ){
         const addCart = await setDoc(doc(db, "users", email, "cart", foodId), {
           ...item,
           quantity: 1,
         });
 
       }
-
+      
       //logic to update the quantity by one by using updateDoc , 
       //increment increase the quantity value by 1
-      if(pathChecker.exists()){
-        await updateDoc(existingItemRef,{
-          quantity:increment(1)
-        }
-        )
+      else{
+         const currentQuantity = pathChecker.data().quantity || 0;
+         if (currentQuantity < maxQuantity) {
+        // Update quantity by +1
+        setCartItems((previousCartItems) => [...previousCartItems, item]);
+
+        await updateDoc(existingItemRef, {
+          quantity: increment(1),
+        });
+      } else {
+        alert("Max quantity reached!");
       }
+      }
+      
       // console.log("Added to cart Succesfully");
     } catch (error) {
       console.error(error);
