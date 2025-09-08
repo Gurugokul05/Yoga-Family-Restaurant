@@ -38,66 +38,66 @@ const Cart = () => {
       // setQuantityofFood(items.id)
     };
     fetchData();
-  }, [cartItems]);
+  }, []);
 
 
   //total changes here
-  // useEffect(async() => {
-  //   const getFoodItem =await collection(db, "users", email, "cart");
-  //   const getquantity = await getDoc(collection(db, "users", email, "cart"));
-  //   const quantityOfFood = getquantity.data();
-  //   console.log(quantityOfFood);
-    
-  //   const newTotal = price.reduce(
-      
-  //     (sum, item) => sum + item.price * item.quantity,
-  //     0
-  //   );
-  //   setTotal(newTotal);
-    
-  // }, [cartItems]);
 
-  const removeItem = (id) => {
+  useEffect(() => {
+    
+   const total = cartItems.reduce((accumulator,element)=>{
+    return accumulator + element.price * element.quantity
+   },0)
+   setTotal(total)
+    
+  }, [cartItems]);
+
+  const removeItem = async (id) => {
     //get the id and delete that from db
     setCartItems(
-      cartItems.filter((item) => {
-        if (item.id === id) {
-          deleteDoc(doc(db, "users", email, "cart", id));
-        }
-      })
+      cartItems.filter((item => item.id !== id))
     );
+    await deleteDoc(doc(db, "users", email, "cart", id));
   };
   //update the quantity of food from db and also changing the db quantity
   //get the current user email through auth.currentUser and get the email so that we can get into the desired db
   const user = auth.currentUser;
   const email = user.email;
+
+
+
+
   //quantity decrease logic
   const updateQuantityDecrease = async (id) => {
-    const getFoodItem = doc(db, "users", email, "cart", id);
-    const getquantity = await getDoc(doc(db, "users", email, "cart", id));
-    const quantityOfFood = getquantity.data().quantity;
-    if (quantityOfFood === 1) {
-      alert("Minimum amount of quantity reached");
-    } else {
-      await updateDoc(getFoodItem, {
-        quantity: increment(-1),
-      });
+
+    const item = cartItems.find((items) => items.id === id );
+    if(item.quantity <= 1){
+      return ;
     }
+    //updating the local state first
+    setCartItems(cartItems.map(element => element.id===id ? {...element,quantity:element.quantity-1}:element))
+    //get the id and update the db
+    const reference = doc(db, "users", email, "cart", id)
+    await updateDoc(reference,{
+      quantity:increment(-1)
+    });
   };
+
+
+
   //quantity update logic
   const updateQuantityAdd = async (id) => {
-    const getFoodItem = doc(db, "users", email, "cart", id);
-    const getquantity = await getDoc(doc(db, "users", email, "cart", id));
-    const quantityOfFood = getquantity.data().quantity;
-
-    if (quantityOfFood >= 10) {
-      alert("Maximum amount of quantity reached");
-    } else {
-      await updateDoc(getFoodItem, {
-        //updating the quantity
-        quantity: increment(1),
-      });
+    const item = cartItems.find((items) => items.id === id );
+    if(item.quantity >= 10){
+      return ;
     }
+    //updating the local state first
+    setCartItems(cartItems.map(element => element.id===id ? {...element,quantity:element.quantity+1}:element))
+    //get the id and update the db
+    const reference = doc(db, "users", email, "cart", id)
+    await updateDoc(reference,{
+      quantity:increment(+1)
+    });
   };
 
   if (cartItems.length === 0) {
