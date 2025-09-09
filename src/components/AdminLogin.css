@@ -97,6 +97,22 @@ button:hover {
   #AdminContainer{
     background-image: url('/src/assets/MobileLogin.jpeg');
   }
+  #AdminContainer {
+  display: flex;
+  justify-content: center;  /* center horizontally */
+  align-items: center;      /* center vertically */
+  min-height: 100vh;        /* full screen height */
+  background: linear-gradient(135deg, #f3f3f3, #e3e3e3);
+  padding: 20px;
+    max-width: 90%;
+}
+
+
+  #AdminContainer2 input, 
+  #loginbutton {
+    font-size: 14px;
+    padding: 10px;
+  }
 }
 .spinner{
   border: 4px solid #f3f3f3; /* Light gray */
@@ -108,6 +124,7 @@ button:hover {
   margin: auto;
   
 }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

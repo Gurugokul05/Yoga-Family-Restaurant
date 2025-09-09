@@ -4,7 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import AdminFoodList from "./AdminFoodList";
 import { auth } from "../firebase/firebase";
 import { signOut } from "firebase/auth";
-
+import "./Home.css";
 
 const AdminPanel = () => {
   const navigate = useNavigate();

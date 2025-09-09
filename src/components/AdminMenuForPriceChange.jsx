@@ -9,6 +9,7 @@ import { SpinnerCircular } from 'spinners-react';
 
 const AdminMenuForPriceChange = () => {
   const [foodItems, setFoodItems] = useState([]);
+  const [loading,setLoading] = useState(true);
    const navigate = useNavigate();
   
     const { category } = useParams();
@@ -45,10 +46,27 @@ const AdminMenuForPriceChange = () => {
         }));
   
         setFoodItems(items);
+        setLoading(false);
       };
       fetchData();
     }, [foodItems]);
   {}
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+        }}
+      >
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+  else{
     return (
       <div>
         <Helmet>
@@ -85,6 +103,8 @@ const AdminMenuForPriceChange = () => {
         </div>
       </div>
     );
+
+  }
 }
 
 export default AdminMenuForPriceChange

@@ -11,7 +11,7 @@ import { FaShoppingCart } from "react-icons/fa";
 const MenuCategory = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-  const [loading,setLoading] = useState(true)
+  const [loading,setLoading] = useState(true);
   const { category } = useParams();
   // console.log(category)
   useEffect(() => {
