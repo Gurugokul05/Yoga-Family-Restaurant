@@ -31,13 +31,13 @@ const AdminPanel = () => {
       <Helmet>
         <title>Admin Pannel</title>
       </Helmet>
-      <header>
+      <header style={{display:"flex",justifyContent:"space-between"}}>
         <div>
           <div>
             <h1>Yoga Family Restaurant</h1>
           </div>
-          <button onClick={() => handleLogOut()}>LogOut</button>
         </div>
+          <button onClick={() => handleLogOut()}>LogOut</button>
       </header>
         <h1 style={{textAlign:"center", marginTop: "20px"}}>Welcome to Admin Pannel</h1>
       <div id="food-list" style={{ marginTop: "20px" }}>
