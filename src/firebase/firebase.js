@@ -5,12 +5,12 @@ import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   //firebase api here
-  apiKey: "AIzaSyA8z0towB5vmUMhQrNWH1g5sJ9xNUAgyKo",
-  authDomain: "yoga-restaurant-4a2a5.firebaseapp.com",
-  projectId: "yoga-restaurant-4a2a5",
-  storageBucket: "yoga-restaurant-4a2a5.firebasestorage.app",
-  messagingSenderId: "668903684943",
-  appId: "1:668903684943:web:3daca149365ab0e9ea233a"
+  apiKey:  import.meta.env.VITE_API_KEY,
+  authDomain:  import.meta.env.VITE_AUTH_DOMAIN,
+  projectId:  import.meta.env.VITE_PROJECT_ID,
+  storageBucket:  import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId:  import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId:  import.meta.env.VITE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
