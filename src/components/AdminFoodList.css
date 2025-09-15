@@ -1,0 +1,83 @@
+.admin-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.admin-header {
+  background: #ff6347; /* Tomato color */
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+#mainintro {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#food-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.items {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.items:hover {
+  transform: scale(1.05);
+}
+
+.items img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;   /* ensures no stretching */
+  border-radius: 8px;
+}
+
+.items p {
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.items button {
+  background: #ff6347;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.items button:hover {
+  background: #e5533d;
+}
+
+/* Footer */
+.footer {
+  background: #222;
+  color: #fff;
+  padding: 25px;
+  text-align: center;
+  margin-top: auto; /* pushes footer to bottom */
+}
+
+.footer-content h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.footer-content p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}

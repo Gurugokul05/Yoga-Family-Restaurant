@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -8,18 +8,16 @@ import { auth } from "../firebase/firebase";
 
 import "./Home.css";
 const Home = () => {
-  
   const [allow, setAllow] = useState(false);
   const navigate = useNavigate();
   const handleView = (category) => {
     // <Link to={`/home/${category.toLowerCase()}`}></Link>
     navigate(`/home/${category.toLowerCase()}`);
   };
-  
+
   useEffect(() => {
     const logOut = onAuthStateChanged(auth, (user) => {
       setAllow(user);
-      
     });
     return () => logOut();
   }, []);
@@ -34,7 +32,7 @@ const Home = () => {
       });
   };
   return (
-    <div>
+    <div id="top-container">
       <Helmet>
         <title>Yoga Family Restaurant</title>
       </Helmet>
@@ -45,12 +43,12 @@ const Home = () => {
           </div>
         </div>
         {allow ? (
-  <button onClick={()=> handleLogOut()}>Logout</button>
-) : (
-  <button onClick={() => navigate("/login")}>Login</button>
-)}
+          <button onClick={() => handleLogOut()}>Logout</button>
+        ) : (
+          <button onClick={() => navigate("/login")}>Login</button>
+        )}
       </header>
-      <div>
+      <div id="main-body">
         <div id="mainintro">
           <h1>Welcome to Yoga Family Restaurant</h1>
           <p id="paragraph">
@@ -97,26 +95,6 @@ const Home = () => {
             <button onClick={() => handleView("Fried-Noodles")}>View</button>
           </div>
           <div className="items">
-            <img src="/dosa.jpg" alt="Dosa" />
-            <p>Dosa</p>
-            <button onClick={() => handleView("Dosa")}>View</button>
-          </div>
-          <div className="items">
-            <img src="/chicken_gravy.jpg" alt="Chicken Gravy" />
-            <p>Chicken Gravy</p>
-            <button onClick={() => handleView("Chicken-Gravy")}>View</button>
-          </div>
-          <div className="items">
-            <img src="/egg_gravy.jpg" alt="Egg" />
-            <p>Egg</p>
-            <button onClick={() => handleView("Egg")}>View</button>
-          </div>
-          <div className="items">
-            <img src="/veg_gravy.jpg" alt="Veg Gravy" />
-            <p>Veg Gravy</p>
-            <button onClick={() => handleView("Veg-Gravy")}>View</button>
-          </div>
-          <div className="items">
             <img src="/grill_chicken.jpg" alt="Grill/Tandoori" />
             <p>Grill/Tandoori</p>
             <button onClick={() => handleView("Grill")}>View</button>
@@ -161,11 +139,7 @@ const Home = () => {
             <p>Ice Creams</p>
             <button onClick={() => handleView("Ice-Creams")}>View</button>
           </div>
-          <div className="items">
-            <img src="/icecream.jpg" alt="Milk Shakes" />
-            <p>Milk Shakes</p>
-            <button onClick={() => handleView("Milk-Shakes")}>View</button>
-          </div>
+
           <button id="cart-sticky-button">
             <Link to="/cart">
               <FaShoppingCart size={40} />
@@ -175,39 +149,62 @@ const Home = () => {
       </div>
       <div id="footer">
         <footer>
-          <h2>Contact Information</h2>
-          <br />
-          <ul>
-            <li>Phone Number : 99943 19875 , 87542 58484.</li>
-            <br />
+          {/* Column 1 - About */}
+          <div className="footer-section">
+            <h2>Yoga Family Restaurant</h2>
+            <p>
+              Enjoy authentic flavors, fresh ingredients, and a family-friendly
+              atmosphere. Dine-in or order online for doorstep delivery.
+            </p>
+          </div>
 
-            <li>
-              Address : No 789 , Yoga Tower , Near Kalasalingam University ,
-              Krishnankoil.
-            </li>
-            <br />
-            <li>
-              <a
-                href="https://maps.app.goo.gl/vErHfsb1LtGLzQgHA"
-                target="_blank"
-              >
-                Gmap Link
+          {/* Column 2 - Quick Links */}
+          <div className="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li>
+                <Link to="/cart">Cart</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3 - Contact */}
+          <div className="footer-section">
+            <h3>Contact Us</h3>
+            <ul>
+              <li>📞 99943 19875 , 87542 58484</li>
+              <li>
+                📍 No 789, Yoga Tower, Near Kalasalingam University,
+                Krishnankoil
+              </li>
+              <li>
+                <a
+                  href="https://maps.app.goo.gl/vErHfsb1LtGLzQgHA"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on Google Maps
+                </a>
+              </li>
+            </ul>
+            <div className="social-icons">
+              <a href="#">
+                <i className="fab fa-facebook-f"></i>
               </a>
-            </li>
-            <br />
-            <li>
-              For orders Call the above numbers. Home Delivery Upto 3 KM.{" "}
-            </li>
-            <br />
-            <li>Opening Hours : 10 A.M to 10 P.M .</li>
-            <br />
-
-            <br />
-            <li>© 2025 Yoga Family Restaurant. All rights reserved.</li>
-            <br />
-            <li>Created by Gurugokul & Team .</li>
-          </ul>
+              <a href="#">
+                <i className="fab fa-instagram"></i>
+              </a>
+              <a href="#">
+                <i className="fab fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
         </footer>
+
+        <div className="footer-bottom">
+          <p>© 2025 Yoga Family Restaurant | All Rights Reserved</p>
+          <p>Created by Gurugokul & Team</p>
+        </div>
       </div>
     </div>
   );

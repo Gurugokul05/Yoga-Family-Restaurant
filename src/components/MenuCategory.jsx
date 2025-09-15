@@ -2,16 +2,24 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { auth, db } from "./../firebase/firebase";
-import { collection, getDocs, addDoc, setDoc, doc, updateDoc, increment, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  setDoc,
+  doc,
+  updateDoc,
+  increment,
+  getDoc,
+} from "firebase/firestore";
 import { Link, useParams } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
-
-
+import Swal from "sweetalert2";
 
 const MenuCategory = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const { category } = useParams();
   // console.log(category)
   useEffect(() => {
@@ -36,47 +44,64 @@ const MenuCategory = () => {
     const user = auth.currentUser;
     const email = user.email;
     const foodId = item.id;
-    const existingItemRef = doc(db,"users",email,"cart",foodId)
-    const pathChecker = await getDoc(doc(db,"users",email,"cart",foodId))
+    const existingItemRef = doc(db, "users", email, "cart", foodId);
+    const pathChecker = await getDoc(doc(db, "users", email, "cart", foodId));
     // console.log(pathChecker.id);
-    
+
     // console.log("Existinng one",existingItemRef.id);
     try {
       //get the user email and store it in users->email-id->cart->food-items
       //getting the current user details and getting the email
       //.exists() return true if already exists and return false if not.
       const maxQuantity = 10;
-      
-      if(!pathChecker.exists() ){
+
+      if (!pathChecker.exists()) {
         const addCart = await setDoc(doc(db, "users", email, "cart", foodId), {
           ...item,
           quantity: 1,
         });
-
+        Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Added to cart",
+      showConfirmButton: false,
+      timer: 1000,
+      toast: true
+    });
       }
-      
-      //logic to update the quantity by one by using updateDoc , 
+
+      //logic to update the quantity by one by using updateDoc ,
       //increment increase the quantity value by 1
-      else{
-         const currentQuantity = pathChecker.data().quantity || 0;
-         if (currentQuantity < maxQuantity) {
-        // Update quantity by +1
-        setCartItems((previousCartItems) => [...previousCartItems, item]);
+      else {
+        const currentQuantity = pathChecker.data().quantity || 0;
+        if (currentQuantity < maxQuantity) {
+          // Update quantity by +1
+          setCartItems((previousCartItems) => [...previousCartItems, item]);
 
-        await updateDoc(existingItemRef, {
-          quantity: increment(1),
-        });
-      } else {
-        alert("Max quantity reached!");
+          await updateDoc(existingItemRef, {
+            quantity: increment(1),
+          });
+          Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Added to cart",
+      showConfirmButton: false,
+      timer: 1000,
+      toast: true
+    });
+        } else {
+          Swal.fire({
+        icon: 'warning',
+        title: 'Maximum quantity reached',
+        text: `You have 10 items of this in your cart already`,
+      });
+        }
       }
-      }
-      
+
       // console.log("Added to cart Succesfully");
     } catch (error) {
       console.error(error);
     }
-    
-    
   };
   if (loading) {
     return (
@@ -92,9 +117,7 @@ const MenuCategory = () => {
         <div className="spinner"></div>
       </div>
     );
-  }
-  else{
-
+  } else {
     return (
       <div>
         <Helmet>
@@ -121,7 +144,9 @@ const MenuCategory = () => {
                     disabled={item.status === "Unavailable"}
                     onClick={() => handleCart(item)}
                   >
-                    {item.status === "Available" ? "Add to Cart" : "Unavailable"}
+                    {item.status === "Available"
+                      ? "Add to Cart"
+                      : "Unavailable"}
                   </button>
                 </div>
               ))}
@@ -135,44 +160,70 @@ const MenuCategory = () => {
         </div>
         <div id="footer">
           <footer>
-            <h2>Contact Information</h2>
-            <br />
-            <ul>
-              <li>Phone Number : 99943 19875 , 87542 58484.</li>
-              <br />
-  
-              <li>
-                Address : No 789 , Yoga Tower , Near Kalasalingam University ,
-                Krishnankoil.
-              </li>
-              <br />
-              <li>
-                <a
-                  href="https://maps.app.goo.gl/vErHfsb1LtGLzQgHA"
-                  target="_blank"
-                >
-                  Gmap Link
+            {/* Column 1 - About */}
+            <div className="footer-section">
+              <h2>Yoga Family Restaurant</h2>
+              <p>
+                Serving love and taste since 2025. Enjoy authentic flavors,
+                fresh ingredients, and a family-friendly atmosphere. Dine-in or
+                order online for doorstep delivery.
+              </p>
+            </div>
+
+            {/* Column 2 - Quick Links */}
+            <div className="footer-section">
+              <h3>Quick Links</h3>
+              <ul>
+                <li>
+                  <Link to="/home">Home</Link>
+                </li>
+                <li>
+                  <Link to="/cart">Cart</Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3 - Contact */}
+            <div className="footer-section">
+              <h3>Contact Us</h3>
+              <ul>
+                <li>📞 99943 19875 , 87542 58484</li>
+                <li>
+                  📍 No 789, Yoga Tower, Near Kalasalingam University,
+                  Krishnankoil
+                </li>
+                <li>
+                  <a
+                    href="https://maps.app.goo.gl/vErHfsb1LtGLzQgHA"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View on Google Maps
+                  </a>
+                </li>
+              </ul>
+              <div className="social-icons">
+                <a href="#">
+                  <i className="fab fa-facebook-f"></i>
                 </a>
-              </li>
-              <br />
-              <li>
-                For orders Call the above numbers. Home Delivery Upto 3 KM.{" "}
-              </li>
-              <br />
-              <li>Opening Hours : 10 A.M to 10 P.M .</li>
-              <br />
-  
-              <br />
-              <li>© 2025 Yoga Family Restaurant. All rights reserved.</li>
-              <br />
-              <li>Created by Gurugokul & Team .</li>
-            </ul>
+                <a href="#">
+                  <i className="fab fa-instagram"></i>
+                </a>
+                <a href="#">
+                  <i className="fab fa-whatsapp"></i>
+                </a>
+              </div>
+            </div>
           </footer>
+
+          <div className="footer-bottom">
+            <p>© 2025 Yoga Family Restaurant | All Rights Reserved</p>
+            <p>Created by Gurugokul & Team</p>
+          </div>
         </div>
       </div>
     );
   }
-
 };
 
 export default MenuCategory;

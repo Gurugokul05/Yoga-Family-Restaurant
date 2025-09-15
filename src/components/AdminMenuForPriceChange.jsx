@@ -1,56 +1,82 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { auth, db, app } from "./../firebase/firebase.js";
-import { collection, getDocs } from "firebase/firestore";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { doc, getFirestore, updateDoc } from "firebase/firestore";
-import { SpinnerCircular } from 'spinners-react';
+import { db } from "./../firebase/firebase.js";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const AdminMenuForPriceChange = () => {
   const [foodItems, setFoodItems] = useState([]);
-  const [loading,setLoading] = useState(true);
-   const navigate = useNavigate();
-  
-    const { category } = useParams();
-    // update the status of the food
-    // console.log(category)
-  
-    const handleChange = async (item) => {
-      const newPrice = window.prompt("Enter the price :", item.price);
-      if(!newPrice) return;
-      const foodRef = doc(db, category, item.id);
-          
-          try {
-            await updateDoc(foodRef, {
-              price:newPrice
-              
-            });
-            
-            console.log("Success");
-          } catch (error) {
-            console.error("Unexpected Error Occured", error);
-          }
-        
-        
-      
-    };
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        const itemref = collection(db, category);
-        const snapshot = await getDocs(itemref);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { category } = useParams();
+
+  // ✅ Change price with SweetAlert2
+  const handleChange = async (item) => {
+    const { value: newPrice } = await Swal.fire({
+      title: "Change Item Price",
+      input: "number",
+      inputLabel: `Current price: ₹${item.price}`,
+      inputValue: item.price,
+      inputAttributes: {
+        min: 1,
+        step: 0.01,
+      },
+      showCancelButton: true,
+      confirmButtonText: "Update",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!newPrice) return;
+
+    const foodRef = doc(db, category, item.id);
+
+    try {
+      await updateDoc(foodRef, { price: newPrice });
+
+      Swal.fire({
+        icon: "success",
+        title: "Price Updated",
+        text: `New price: ₹${newPrice}`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      // ✅ update local state without refetching whole list
+      setFoodItems((prev) =>
+        prev.map((f) =>
+          f.id === item.id ? { ...f, price: newPrice } : f
+        )
+      );
+    } catch (error) {
+      console.error("Unexpected Error Occurred", error);
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: "Could not update price. Try again.",
+      });
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const itemRef = collection(db, category);
+        const snapshot = await getDocs(itemRef);
         const items = snapshot.docs.map((doc) => ({
-          id: `${doc.id}`,
+          id: doc.id,
           ...doc.data(),
         }));
-  
         setFoodItems(items);
         setLoading(false);
-      };
-      fetchData();
-    }, [foodItems]);
-  {}
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [category]); // ✅ fetch only when category changes
+
   if (loading) {
     return (
       <div
@@ -65,46 +91,33 @@ const AdminMenuForPriceChange = () => {
         <div className="spinner"></div>
       </div>
     );
-  }
-  else{
+  } else {
     return (
       <div>
         <Helmet>
           <title>Yoga Family Restaurant</title>
         </Helmet>
         <header>
-          <div>
-            <div>
-              <h1>Yoga Family Restaurant</h1>
-            </div>
-          </div>
+          <h1>Yoga Family Restaurant</h1>
         </header>
-        <div>
-          <div>
-            <div id="food-list">
-              {foodItems.map((item) => (
-                
-                <div key={item.id} className="items">
-                  <img src={item.img} alt={item.name} />
-                  <p>{item.name}</p>
-                  <p>
-                    ₹{item.price} - {item.status}
-                  </p>
-                  <button
-                    
-                    onClick={() => handleChange(item)}
-                  >
-                    Change price
-                  </button>
-                </div>
-              ))}
+
+        <div id="food-list">
+          {foodItems.map((item) => (
+            <div key={item.id} className="items">
+              <img src={item.img} alt={item.name} />
+              <p>{item.name}</p>
+              <p>
+                ₹{item.price} - {item.status}
+              </p>
+              <button onClick={() => handleChange(item)}>
+                Change price
+              </button>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     );
-
   }
-}
+};
 
-export default AdminMenuForPriceChange
+export default AdminMenuForPriceChange;

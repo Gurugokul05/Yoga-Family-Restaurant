@@ -4,7 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import AdminFoodList from "./AdminFoodList";
 import { auth } from "../firebase/firebase";
 import { signOut } from "firebase/auth";
-import "./Home.css";
+import "./AdminPanel.css"
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -27,11 +27,11 @@ const AdminPanel = () => {
       });
   };
   return (
-    <div>
+    <div id="top-container">
       <Helmet>
         <title>Admin Pannel</title>
       </Helmet>
-      <header style={{display:"flex",justifyContent:"space-between"}}>
+      <header>
         <div>
           <div>
             <h1>Yoga Family Restaurant</h1>
@@ -39,10 +39,10 @@ const AdminPanel = () => {
         </div>
           <button onClick={() => handleLogOut()}>LogOut</button>
       </header>
-        <h1 style={{textAlign:"center", marginTop: "20px"}}>Welcome to Admin Pannel</h1>
-      <div id="food-list" style={{ marginTop: "20px" }}>
+        <h1>Welcome to Admin Pannel</h1>
+      <div id="food-list" >
         <div className="items">
-          <img src="/view_orders.jpeg" alt="" style={{borderRadius:"20%"}} />
+          <img src="/view_orders.jpeg" alt="" />
           <p>View Orders</p>
           <button onClick={() => viewOrders()}>View Orders</button>
         </div>

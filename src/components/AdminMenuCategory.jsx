@@ -6,6 +6,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { Link, useParams } from "react-router-dom";
 import { doc, getFirestore, updateDoc } from "firebase/firestore";
 import { SpinnerCircular } from "spinners-react";
+import Swal from "sweetalert2";
 
 const AdminMenuCategory = () => {
   const [foodItems, setFoodItems] = useState([]);
@@ -23,7 +24,14 @@ const AdminMenuCategory = () => {
           status: "Unavailable",
         });
 
-        console.log("Success");
+        Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: `Status of ${item.name} changed`,
+              showConfirmButton: false,
+              timer: 1000,
+              toast: true
+            });
       } catch (error) {
         console.error("Unexpected Error Occured", error);
       }
@@ -32,7 +40,14 @@ const AdminMenuCategory = () => {
         await updateDoc(foodRef, {
           status: "Available",
         });
-        console.log("Success");
+        Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: `Status of ${item.name} changed`,
+              showConfirmButton: false,
+              timer: 1000,
+              toast: true
+            });
       } catch (error) {
         console.error("Unexpected Error Occured", error);
       }
@@ -73,7 +88,7 @@ const AdminMenuCategory = () => {
   else{
 
     return (
-      <div>
+      <div >
         <Helmet>
           <title>Yoga Family Restaurant</title>
         </Helmet>
@@ -86,7 +101,7 @@ const AdminMenuCategory = () => {
         </header>
         <div>
           <div>
-            <div id="food-list">
+            <div id="food-list" >
               {foodItems.map((item) => (
                 <div key={item.id} className="items">
                   <img src={item.img} alt={item.name} />
