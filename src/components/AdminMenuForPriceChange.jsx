@@ -11,7 +11,7 @@ const AdminMenuForPriceChange = () => {
   const navigate = useNavigate();
   const { category } = useParams();
 
-  // ✅ Change price with SweetAlert2
+  //  Change price with SweetAlert2
   const handleChange = async (item) => {
     const { value: newPrice } = await Swal.fire({
       title: "Change Item Price",
@@ -42,7 +42,7 @@ const AdminMenuForPriceChange = () => {
         showConfirmButton: false,
       });
 
-      // ✅ update local state without refetching whole list
+      //  update local state without refetching whole list
       setFoodItems((prev) =>
         prev.map((f) =>
           f.id === item.id ? { ...f, price: newPrice } : f
@@ -75,7 +75,7 @@ const AdminMenuForPriceChange = () => {
       }
     };
     fetchData();
-  }, [category]); // ✅ fetch only when category changes
+  }, [category]); //  fetch only when category changes
 
   if (loading) {
     return (
@@ -101,7 +101,7 @@ const AdminMenuForPriceChange = () => {
           <h1>Yoga Family Restaurant</h1>
         </header>
 
-        <div id="food-list">
+        <div id="food-list" style={{backgroundColor:"inherit",boxShadow:"none"}}>
           {foodItems.map((item) => (
             <div key={item.id} className="items">
               <img src={item.img} alt={item.name} />

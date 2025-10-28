@@ -15,6 +15,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import Swal from "sweetalert2";
+import "./Home.css"
 
 const MenuCategory = () => {
   const [foodItems, setFoodItems] = useState([]);
@@ -132,13 +133,13 @@ const MenuCategory = () => {
         </header>
         <div>
           <div>
-            <div id="food-list">
+            <div id="food-list" style={{backgroundColor:"inherit",boxShadow:"none",marginTop:"10px",maxWidth:"1800px",marginBottom:"15px"}}>
               {foodItems.map((item) => (
-                <div key={item.id} className="items">
-                  <img src={item.img} alt={item.name} />
+                <div key={item.id} className="items" style={{}}>
+                  <img src={(item.img)||(item.Img)} alt={item.name} />
                   <p>{item.name}</p>
                   <p>
-                    ₹{item.price} - {item.status}
+                    ₹{(item.price)||(item.price )} - {item.status}
                   </p>
                   <button
                     disabled={item.status === "Unavailable"}

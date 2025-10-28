@@ -10,7 +10,7 @@ const AdminLogin = () => {
   const [loginStatus, setLoginStatus] = useState("");
   const [email, setEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
-  const [loading, setLoading] = useState(false); // <-- loading state
+  const [loading, setLoading] = useState(false); //  loading state
   const navigate = useNavigate();
 
   const checkCredentials = async (e) => {
@@ -94,13 +94,13 @@ const AdminLogin = () => {
             <br />
             <p style={{ color: "red", fontWeight: "bold" }}>{loginStatus}</p>
             <p>
-              Forgot Your Password? <a onClick={changePassword}>Click here</a>
+              Forgot Your Password? <a onClick={changePassword} style={{textDecoration:"none"}}>Click here</a>
             </p>
             <button type="submit" id="loginbutton">
               Log in
             </button>
             <p>
-              Don't have account? <Link to="/register">Register</Link>
+              Don't have account? <Link to="/register" style={{textDecoration:"none"}}>Register</Link>
             </p>
           </form>
         )}

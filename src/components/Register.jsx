@@ -15,7 +15,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [otpStatus, setOtpStatus] = useState("");
-  const [loading, setLoading] = useState(false); // <-- spinner loading
+  const [loading, setLoading] = useState(false); //  spinner loading
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -95,7 +95,7 @@ const Register = () => {
             <p style={{ color: "red", fontWeight: "bold" }}>{message}</p>
             <button type="submit">Register</button>
             <p>
-              Have an account? <Link to="/login">Log In</Link>
+              Have an account? <Link to="/login" style={{textDecoration:"none"}}>Log In</Link>
             </p>
           </form>
         ) : (

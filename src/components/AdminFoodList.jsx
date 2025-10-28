@@ -26,7 +26,7 @@ const AdminFoodList = () => {
       </div>
 
       {/* Food list */}
-      <div id="food-list">
+      <div id="food-list" style={{backgroundColor:"inherit",boxShadow:"none"}}>
         {[
           { img: "/IMG_20250719_191256.jpg", name: "Biryani", key: "Biryani" },
           { img: "/parrota.jpg", name: "Parotta & Chappathi", key: "Parotta" },
@@ -41,8 +41,7 @@ const AdminFoodList = () => {
           { img: "/shawarma.jpg", name: "Shawarma/Rolls/Wraps", key: "Shawarma" },
           { img: "/pizza.jpg", name: "Pizza", key: "Pizza" },
           { img: "/fried_chicken.jpg", name: "Fried Chicken", key: "Fried-Chicken" },
-          { img: "/juice.jpg", name: "Mojito/Fresh Juice", key: "Fresh-Juice" },
-          { img: "/icecream.jpg", name: "Ice Creams", key: "Ice-Creams" },
+          
          
         ].map((item, index) => (
           <div key={index} className="items">

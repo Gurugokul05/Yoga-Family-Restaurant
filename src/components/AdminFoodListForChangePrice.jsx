@@ -24,7 +24,7 @@ const AdminFoodListForChangePrice = () => {
         <div id="mainintro">
           <h1>Welcome to Yoga Family Restaurant</h1>
         </div>
-        <div id="food-list">
+        <div id="food-list" style={{backgroundColor:"inherit",boxShadow:"none"}}>
           <div className="items">
             <img src="/IMG_20250719_191256.jpg" alt="Biryani" />
             <p>Biryani</p>
@@ -85,16 +85,7 @@ const AdminFoodListForChangePrice = () => {
             <p>Fried Chicken</p>
             <button onClick={() => handleView("Fried-Chicken")}>View</button>
           </div>
-          <div className="items">
-            <img src="/juice.jpg" alt="Mojito/Fresh Juice" />
-            <p>Mojito/Fresh Juice</p>
-            <button onClick={() => handleView("Fresh-Juice")}>View</button>
-          </div>
-          <div className="items">
-            <img src="/icecream.jpg" alt="Ice Creams" />
-            <p>Ice Creams</p>
-            <button onClick={() => handleView("Ice-Creams")}>View</button>
-          </div>
+          
         </div>
       </div>
     </div>

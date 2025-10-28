@@ -8,7 +8,9 @@ import "./AdminPanel.css"
 
 const AdminPanel = () => {
   const navigate = useNavigate();
-  const viewOrders = () => {};
+  const viewOrders = () => {
+    navigate("/orders")
+  };
   const editStatus = () => {
     navigate("/food-list");
   };
@@ -26,6 +28,9 @@ const AdminPanel = () => {
         console.error(error);
       });
   };
+  const addFood = ()=>{
+    navigate("/add-food");
+  };
   return (
     <div id="top-container">
       <Helmet>
@@ -37,10 +42,10 @@ const AdminPanel = () => {
             <h1>Yoga Family Restaurant</h1>
           </div>
         </div>
-          <button onClick={() => handleLogOut()}>LogOut</button>
+          <button onClick={() => handleLogOut()}>Log Out</button>
       </header>
         <h1>Welcome to Admin Pannel</h1>
-      <div id="food-list" >
+      <div id="food-list"  style={{backgroundColor:"inherit",boxShadow:"none"}} >
         <div className="items">
           <img src="/view_orders.jpeg" alt="" />
           <p>View Orders</p>
@@ -55,6 +60,11 @@ const AdminPanel = () => {
           <img src="/change_price.jpeg" alt="" />
           <p>Change Price</p>
           <button onClick={() => changePrice()}>Change price</button>
+        </div>
+        <div className="items">
+          <img src="/add.png" alt="" />
+          <p>Add Food</p>
+          <button onClick={() => addFood()}>Add Food</button>
         </div>
       </div>
     </div>

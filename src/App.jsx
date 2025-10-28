@@ -15,6 +15,8 @@ import AdminFoodListForChangePrice from "./components/AdminFoodListForChangePric
 import AdminMenuForPriceChangeWrapper from "./components/AdminMenuForPriceChangeWrapper";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserRoute from "./components/UserRoute";
+import Orders from "./components/Orders";
+import AdminAddFood from "./components/AdminAddFood";
 
 function App() {
   return (
@@ -46,6 +48,11 @@ function App() {
           path="/food-list-for-price-change"
           element={<AdminFoodListForChangePrice />}
         ></Route>
+        <Route
+          path="/add-food"
+          element={<AdminAddFood/>}
+        ></Route>
+        <Route path="/orders" element={<Orders/>}></Route>
         <Route path="/food-list" element={<AdminFoodList />}></Route>
         <Route path="/admin-pannel" element={<AdminPanel />}></Route>
       </Route>
