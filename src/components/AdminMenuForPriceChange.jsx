@@ -104,7 +104,7 @@ const AdminMenuForPriceChange = () => {
         <div id="food-list" style={{backgroundColor:"inherit",boxShadow:"none"}}>
           {foodItems.map((item) => (
             <div key={item.id} className="items">
-              <img src={item.img} alt={item.name} />
+              <img src={(item.img)||(item.Img)} alt={item.name} />
               <p>{item.name}</p>
               <p>
                 ₹{item.price} - {item.status}
