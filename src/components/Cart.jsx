@@ -130,7 +130,7 @@ const handlePayment = async () => {
   address = userAddress;
 
   // Build the UPI payment link
-  const upiId = "gurugokul05@oksbi"; // 👈 replace with your restaurant UPI ID
+  const upiId = "gurugokul05-1@oksbi"; // 👈 replace with your restaurant UPI ID
   const payeeName = encodeURIComponent("Yoga Family Restaurant");
   const amount = total.toFixed(2);
   const note = encodeURIComponent("Order Payment");
