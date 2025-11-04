@@ -85,171 +85,92 @@ const Cart = () => {
   };
 
   // Payment
-  const handlePayment = async () => {
-    if (total <= 0) {
-      Swal.fire("Oops!", "Cart is empty!", "warning");
-      return;
-    }
+  // UPI Payment (Deep Link Method)
+const handlePayment = async () => {
+  if (total <= 0) {
+    Swal.fire("Oops!", "Cart is empty!", "warning");
+    return;
+  }
 
-    let contact = user?.phoneNumber || "";
-    let address = user?.Address || "";
-    let name = user?.Name || "";
-    //get name
-    const { value: userName } = await Swal.fire({
-      title: "Enter your Name",
-      input: "text",
-      inputLabel: "Name",
-      inputPlaceholder: "Enter your Name",
-      inputAttributes: {
-        autocapitalize: "off",
-        autocorrect: "off",
-      },
-      showCancelButton: true,
+  // Ask for customer name, phone, address (same as before)
+  let contact = user?.phoneNumber || "";
+  let address = user?.Address || "";
+  let name = user?.Name || "";
+
+  const { value: userName } = await Swal.fire({
+    title: "Enter your Name",
+    input: "text",
+    inputLabel: "Name",
+    inputPlaceholder: "Enter your Name",
+    showCancelButton: true,
+  });
+  if (!userName) return Swal.fire("Error", "Name is required!", "error");
+  name = userName;
+
+  const { value: phone } = await Swal.fire({
+    title: "Enter your mobile number",
+    input: "text",
+    inputLabel: "10-digit mobile number",
+    inputPlaceholder: "Enter your number",
+    showCancelButton: true,
+  });
+  if (!phone || !/^\d{10}$/.test(phone)) {
+    return Swal.fire("Error", "Enter a valid 10-digit number", "error");
+  }
+  contact = `+91 ${phone}`;
+
+  const { value: userAddress } = await Swal.fire({
+    title: "Enter your Delivery Address",
+    input: "textarea",
+    inputLabel: "Address",
+    inputPlaceholder: "Enter your Delivery Address",
+    showCancelButton: true,
+  });
+  if (!userAddress) return Swal.fire("Error", "Address is required!", "error");
+  address = userAddress;
+
+  // Build the UPI payment link
+  const upiId = "gurugokul05@oksbi"; // 👈 replace with your restaurant UPI ID
+  const payeeName = encodeURIComponent("Yoga Family Restaurant");
+  const amount = total.toFixed(2);
+  const note = encodeURIComponent("Order Payment");
+  const upiLink = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${note}`;
+
+  // Open UPI payment app
+  window.location.href = upiLink;
+
+  // After a small delay, assume order placed (since we can’t auto-verify)
+  setTimeout(async () => {
+    await addDoc(collection(db, "orders"), {
+      name,
+      email: user?.email || "",
+      contact,
+      address,
+      amount: total,
+      items: cartItems,
+      paymentMethod: "UPI",
+      timestamp: Date.now(),
+      status: "Pending Verification",
     });
-    if (!userName) {
-      Swal.fire("Error", "User Name is required!", "error");
-      return;
-    }
-    name = userName;
-    // get phone number
-    if (!contact) {
-      const { value: phone } = await Swal.fire({
-        title: "Enter your mobile number",
-        input: "text",
-        inputLabel: "10-digit mobile number",
-        inputPlaceholder: "Enter your number",
-        inputAttributes: {
-          maxlength: 10,
-          autocapitalize: "off",
-          autocorrect: "off",
-        },
-        showCancelButton: true,
-        
-      });
 
-      if (!phone) {
-        Swal.fire("Error", "Phone number is required!", "error");
-        return;
-      }
+    Swal.fire(
+      "Payment Initiated",
+      "Please complete the UPI payment in your app.\nWe'll verify and confirm shortly.",
+      "info"
+    );
 
-      if (!/^\d{10}$/.test(phone)) {
-        Swal.fire("Error", "Enter a valid 10-digit number", "error");
-        return;
-      }
+    // Clear cart locally and in Firestore
+    const cartRef = collection(db, "users", email, "cart");
+    const snapshot = await getDocs(cartRef);
+    const batch = writeBatch(db);
+    snapshot.docs.forEach((docItem) => batch.delete(docItem.ref));
+    await batch.commit();
 
-      contact = `+91 ${phone}`;
-      //get address
-      const { value: userAddress } = await Swal.fire({
-        title: "Enter your Delivery Address",
-        input: "textarea",
-        inputLabel: "Address",
-        inputPlaceholder: "Enter your Delivery Address",
-        inputAttributes: {
-          autocapitalize: "off",
-          autocorrect: "off",
-        },
-        showCancelButton: true,
-      });
-      if (!userAddress) {
-        Swal.fire("Error", "Delivery Address is required!", "error");
-        return;
-      }
-      address = userAddress;
-    }
+    setCartItems([]);
+    navigate("/home");
+  }, 5000);
+};
 
-    // if(!address){
-    //   const { value: userAddress } = await Swal.fire({
-    //     title: "Enter your Delivery Address",
-    //     input: "text",
-    //     inputLabel: "Address",
-    //     inputPlaceholder: "Enter your Delivery Address",
-    //     inputAttributes: {
-    //       autocapitalize: "off",
-    //       autocorrect: "off",
-    //     },
-    //     showCancelButton: true,
-    //   });
-    //   if (!userAddress) {
-    //     Swal.fire("Error", "Delivery Address is required!", "error");
-    //     return;
-    //   }
-    // }
-
-    // Razorpay options
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_SECRET_KEY, //  Razorpay test key
-      amount: Math.round(total * 100), // paise
-      currency: "INR",
-      name: "Yoga Family Restaurant",
-      description: "Food Order Payment",
-      prefill: {
-        name: name,
-        email: user?.email || "",
-        contact: contact,
-        address: address,
-        method: "upi", // hint UPI as preferred
-      },
-      handler: async function (response) {
-        // console.log("Payment success:", response);
-
-        // Save payment in Firestore
-        try {
-          await addDoc(collection(db, "orders"), {
-            paymentId: response.razorpay_payment_id,
-            orderId: response.razorpay_order_id || null,
-            signature: response.razorpay_signature || null,
-            name: name,
-            email: user?.email || "",
-            amount: total,
-            contact: contact,
-            address: address,
-            timestamp: Date.now(),
-            paymentStatus: "success",
-            ...cartItems,
-          });
-        } catch (err) {
-          console.error("Failed to save payment:", err);
-        }
-
-        // SweetAlert success
-        await Swal.fire(
-          "Success",
-          "Payment successful! Thank you for your order.",
-          "success"
-        );
-
-        // Clear cart from Firestore
-        const cartRef = collection(db, "users", email, "cart");
-        const snapshot = await getDocs(cartRef);
-        const batch = writeBatch(db);
-        snapshot.docs.forEach((docItem) => batch.delete(docItem.ref));
-        await batch.commit();
-
-        // Clear local state
-        setCartItems([]);
-
-        // Redirect to home
-
-        navigate("/home");
-      },
-
-      modal: {
-        escape: true,
-        ondismiss: function () {
-          console.log("Checkout closed by user");
-        },
-      },
-      theme: { color: "#0B874E" },
-    };
-
-    try {
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      console.error("Razorpay error:", err);
-      Swal.fire("Error", "Failed to open payment. Try again.", "error");
-    }
-  };
 
   if (loading) {
     return (
